@@ -4,6 +4,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35825.156 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eight.API", "Eight.API\Eight.API.csproj", "{A05FBC72-C33E-4FF9-AA44-9E44D8915787}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2E5AB290-9E0D-465C-9921-3725A4D86B99} = {2E5AB290-9E0D-465C-9921-3725A4D86B99}
+		{772DC22A-9DD9-4D84-B844-042C38790626} = {772DC22A-9DD9-4D84-B844-042C38790626}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eight.Domain", "Eight.Domain\Eight.Domain.csproj", "{5FB1CF5A-D950-4219-B3A7-AF9525CF094A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eight.Infrastructure", "Eight.Infrastructure\Eight.Infrastructure.csproj", "{2E5AB290-9E0D-465C-9921-3725A4D86B99}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5FB1CF5A-D950-4219-B3A7-AF9525CF094A} = {5FB1CF5A-D950-4219-B3A7-AF9525CF094A}
+		{772DC22A-9DD9-4D84-B844-042C38790626} = {772DC22A-9DD9-4D84-B844-042C38790626}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eight.Application", "Eight.Application\Eight.Application.csproj", "{772DC22A-9DD9-4D84-B844-042C38790626}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5FB1CF5A-D950-4219-B3A7-AF9525CF094A} = {5FB1CF5A-D950-4219-B3A7-AF9525CF094A}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +37,18 @@ Global
 		{A05FBC72-C33E-4FF9-AA44-9E44D8915787}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A05FBC72-C33E-4FF9-AA44-9E44D8915787}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A05FBC72-C33E-4FF9-AA44-9E44D8915787}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FB1CF5A-D950-4219-B3A7-AF9525CF094A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB1CF5A-D950-4219-B3A7-AF9525CF094A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB1CF5A-D950-4219-B3A7-AF9525CF094A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB1CF5A-D950-4219-B3A7-AF9525CF094A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E5AB290-9E0D-465C-9921-3725A4D86B99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E5AB290-9E0D-465C-9921-3725A4D86B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E5AB290-9E0D-465C-9921-3725A4D86B99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E5AB290-9E0D-465C-9921-3725A4D86B99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{772DC22A-9DD9-4D84-B844-042C38790626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{772DC22A-9DD9-4D84-B844-042C38790626}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{772DC22A-9DD9-4D84-B844-042C38790626}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{772DC22A-9DD9-4D84-B844-042C38790626}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
