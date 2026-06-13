@@ -1,0 +1,32 @@
+2026-06-13 14:50:03.993 +04:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2026-06-13 14:50:04.151 +04:00 [INF] User profile is available. Using 'C:\Users\USER\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-13 14:50:04.601 +04:00 [INF] Now listening on: http://localhost:5013
+2026-06-13 14:50:04.817 +04:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-13 14:50:04.829 +04:00 [INF] Hosting environment: Development
+2026-06-13 14:50:04.875 +04:00 [INF] Content root path: C:\Users\USER\Documents\Project\Eight.API
+2026-06-13 14:50:06.868 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/swagger/index.html - null null
+2026-06-13 14:50:07.552 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/swagger/index.html - 200 null text/html;charset=utf-8 690.1435ms
+2026-06-13 14:50:07.694 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/swagger/index.js - null null
+2026-06-13 14:50:07.714 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/_vs/browserLink - null null
+2026-06-13 14:50:07.778 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-13 14:50:07.811 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/swagger/index.js - 200 null application/javascript;charset=utf-8 117.12ms
+2026-06-13 14:50:07.879 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/_framework/aspnetcore-browser-refresh.js - 200 16503 application/javascript; charset=utf-8 100.9468ms
+2026-06-13 14:50:08.045 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/_vs/browserLink - 200 null text/javascript; charset=UTF-8 331.6647ms
+2026-06-13 14:50:08.588 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/swagger/v1/swagger.json - null null
+2026-06-13 14:50:08.699 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 110.6832ms
+2026-06-13 14:55:56.892 +04:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2026-06-13 14:55:57.272 +04:00 [INF] User profile is available. Using 'C:\Users\USER\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-06-13 14:55:57.624 +04:00 [INF] Now listening on: http://localhost:5013
+2026-06-13 14:55:57.782 +04:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-13 14:55:58.477 +04:00 [INF] Hosting environment: Development
+2026-06-13 14:55:58.704 +04:00 [INF] Content root path: C:\Users\USER\Documents\Project\Eight.API
+2026-06-13 14:56:00.296 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/swagger/index.html - null null
+2026-06-13 14:56:01.322 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/swagger/index.html - 200 null text/html;charset=utf-8 1054.1458ms
+2026-06-13 14:56:01.329 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/swagger/index.js - null null
+2026-06-13 14:56:01.406 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/_framework/aspnetcore-browser-refresh.js - null null
+2026-06-13 14:56:02.088 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/_vs/browserLink - null null
+2026-06-13 14:56:02.114 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/swagger/index.js - 200 null application/javascript;charset=utf-8 784.8786ms
+2026-06-13 14:56:02.124 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/_framework/aspnetcore-browser-refresh.js - 200 16503 application/javascript; charset=utf-8 717.8167ms
+2026-06-13 14:56:02.413 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/_vs/browserLink - 200 null text/javascript; charset=UTF-8 319.92ms
+2026-06-13 14:56:04.112 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:5013/swagger/v1/swagger.json - null null
+2026-06-13 14:56:04.137 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:5013/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 24.932ms
