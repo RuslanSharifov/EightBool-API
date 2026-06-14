@@ -21,12 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Extensions\" />
     <Folder Include="Middleware\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Eight.Application\Eight.Application.csproj" />
     <ProjectReference Include="..\Eight.Infrastructure\Eight.Infrastructure.csproj" />
   </ItemGroup>
 

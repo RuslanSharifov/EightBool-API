@@ -1,6 +1,11 @@
 ﻿using Eight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Eight.Application.Interfaces;
+using Eight.Infrastructure.Services;
+using Eight.Domain.Enums;
+
 using Serilog;
+using Eight.Domain.Entities;
 
 internal class Program
 {
@@ -43,9 +48,49 @@ internal class Program
             options.AddPolicy("AllowAll", p =>
                 p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = Microsoft.OpenApi.Models.ParameterLocation.Header
+            });
+            c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+        });
+
+
+
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IVenueService, VenueService>();
+        builder.Services.AddScoped<ITableService, TableService>();
+        builder.Services.AddScoped<ISessionService, SessionService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+
+
 
         var app = builder.Build();
 
@@ -59,6 +104,26 @@ internal class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            if (!db.Users.Any())
+            {
+                db.Users.Add(new Eight.Domain.Entities.User
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Admin",
+                    Email = "admin@eb.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+                    Role = UserRole.SuperAdmin,
+                    IsActive = true
+                });
+                db.SaveChanges();
+            }
+        }
+
         app.Run();
     }
 }

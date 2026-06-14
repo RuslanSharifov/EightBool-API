@@ -17,5 +17,11 @@ public class AppDbContext : DbContext
     public DbSet<Venue> Venues => Set<Venue>();
     public DbSet<Table> Tablse => Set<Table>();
 
+    public DbSet<Session> Sessions => Set<Session>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<License> Licenses => Set<License>();
+    public DbSet<Table> Tables => Set<Table>();
+
 
 }

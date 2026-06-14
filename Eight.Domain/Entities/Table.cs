@@ -15,4 +15,5 @@ public class Table
     // Relations
     public Guid VenueId { get; set; }
     public Venue Venue { get; set; } = null!;
+    public ICollection<Session> Sessions { get; set; } = new List<Session>();
 }

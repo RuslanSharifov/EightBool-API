@@ -10,5 +10,7 @@ public class TableConfiguration : IEntityTypeConfiguration<Table>
     {
         builder.Property(x => x.PricePerHour)
                .HasPrecision(18, 2);
+
+        builder.ToTable("BilliardTables");
     }
 }
