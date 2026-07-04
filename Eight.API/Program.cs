@@ -1,11 +1,12 @@
-﻿using Eight.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Eight.Application.Interfaces;
-using Eight.Infrastructure.Services;
-using Eight.Domain.Enums;
-
-using Serilog;
+﻿using Eight.Application.Interfaces;
+using Eight.Application.Validators;
 using Eight.Domain.Entities;
+using Eight.Domain.Enums;
+using Eight.Infrastructure.Persistence;
+using Eight.Infrastructure.Services;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 internal class Program
 {
@@ -89,6 +90,7 @@ internal class Program
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();
 
 
 

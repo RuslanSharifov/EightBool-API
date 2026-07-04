@@ -26,8 +26,12 @@ public class AuthService : IAuthService
         var user = await _db.Users
             .FirstOrDefaultAsync(x => x.Email == request.Email && x.IsActive);
 
+
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("Email və ya şifrə yanlışdır.");
+
+        if (!user.IsActive)
+            throw new UnauthorizedAccessException("BLOCKED");
 
         var token = GenerateToken(user);
         return new LoginResponse(token, user.Role.ToString(), user.Name);
