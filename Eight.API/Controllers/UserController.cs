@@ -24,13 +24,32 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetAll()
         => Ok(await _userService.GetAllAsync());
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+        => Ok(await _userService.GetByIdAsync(id));
+
+    [HttpPut("{id}/role")]
+    public async Task<IActionResult> ChangeRole(Guid id, [FromBody] int newRole)
+    {
+        await _userService.UpdateRol(id, newRole);
+        return Ok(new { message = "Rol uğurla yeniləndi." });
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(UserRequest request)
     {
         var validation = await _validator.ValidateAsync(request);
         if (!validation.IsValid)
             return BadRequest(validation.Errors.Select(e => e.ErrorMessage));
-        return Ok(await _userService.CreateAsync(request));
+
+        try
+        {
+            return Ok(await _userService.CreateAsync(request));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new[] { ex.Message });
+        }
     }
 
     [HttpPatch("{id}/active")]

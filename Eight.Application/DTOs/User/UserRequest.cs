@@ -7,4 +7,4 @@ public record UserRequest(
     string Email, 
     string Password, 
     UserRole Role
-    );
+);

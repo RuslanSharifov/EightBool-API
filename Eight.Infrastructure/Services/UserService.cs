@@ -12,13 +12,34 @@ public class UserService : IUserService
 
     public UserService(AppDbContext db) => _db = db;
 
+
     public async Task<List<UserResponse>> GetAllAsync()
         => await _db.Users
+            .Where(x => x.Role != UserRole.SuperAdmin)
             .Select(x => ToResponse(x))
             .ToListAsync();
+    public async Task<UserResponse> GetByIdAsync(Guid id)
+    {
+        var user = await _db.Users.FindAsync(id)
+            ?? throw new Exception("İstifadəçi tapılmadı.");
+
+        var UserFront = new User()
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt,
+            Role = user.Role
+        };
+        return ToResponse(UserFront);
+    }
 
     public async Task<UserResponse> CreateAsync(UserRequest request)
     {
+        if (await _db.Users.AnyAsync(x => x.Email == request.Email))
+            throw new Exception("Bu email artıq mövcuddur.");
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -32,6 +53,8 @@ public class UserService : IUserService
         return ToResponse(user);
     }
 
+    
+
     public async Task SetActiveAsync(Guid id, bool isActive)
     {
         var user = await _db.Users.FindAsync(id)
@@ -42,4 +65,16 @@ public class UserService : IUserService
 
     private static UserResponse ToResponse(User x) =>
         new(x.Id, x.Name, x.Email, x.Role, x.IsActive);
+
+    public async Task UpdateRol(Guid id, int rol)
+    {
+        var user = await _db.Users.FindAsync(id)
+            ?? throw new Exception("İstifadəçi tapılmadı.");
+        if (!Enum.IsDefined(typeof(UserRole), rol))
+        {
+            throw new Exception("Rol tipi xetası.");
+        }
+        user.Role = (UserRole)rol;
+        await _db.SaveChangesAsync();
+    }
 }
