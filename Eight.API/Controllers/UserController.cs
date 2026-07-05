@@ -1,8 +1,9 @@
-﻿using Eight.Application.DTOs.User;
+﻿using Microsoft.AspNetCore.Authorization;
 using Eight.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using Eight.Application.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using Eight.Domain.Entities;
 
 namespace Eight.API.Controllers;
 
@@ -24,7 +25,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetAll()
         => Ok(await _userService.GetAllAsync());
 
-    [HttpGet("{id}")]
+    [HttpGet("Profile/{id}")]
     public async Task<IActionResult> GetById(Guid id)
         => Ok(await _userService.GetByIdAsync(id));
 
@@ -57,5 +58,48 @@ public class UserController : ControllerBase
     {
         await _userService.SetActiveAsync(id, isActive);
         return NoContent();
+    }
+
+    [HttpPatch("{id}/role")]
+    public async Task<IActionResult> UpdateRole(Guid id, [FromQuery] int role)
+    {
+        try
+        {
+            await _userService.UpdateRoleAsync(id, role);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new[] { ex.Message });
+        }
+    }
+
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserVenue(Guid id)
+    {
+        try
+        {
+            var venue = await _userService.GetUserVenue(id);
+            return Ok(venue);
+        }catch (Exception ex)
+        {
+            return BadRequest(new[] {ex.Message });
+        }
+    }
+
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateRequest request)
+    {
+        try
+        {
+            await _userService.UpdateAsync(id, request);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return NoContent();
+        }
     }
 }
