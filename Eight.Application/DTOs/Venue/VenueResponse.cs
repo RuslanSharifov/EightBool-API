@@ -3,6 +3,7 @@
 public record VenueResponse(
     Guid Id,
     string Name,
+    Guid AdminID,
     string Address,
     TimeOnly OpenTime,
     TimeOnly CloseTime,

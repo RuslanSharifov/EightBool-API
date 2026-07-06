@@ -4,7 +4,8 @@ using Eight.Domain.Enums;
 namespace Eight.Application.DTOs.User;
 
 public record UserResponse(
-    Guid Id, 
+    Guid Id,
+    Guid? VenueId,
     string Name, 
     string Email, 
     UserRole Role, 

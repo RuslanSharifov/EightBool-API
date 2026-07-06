@@ -3,7 +3,8 @@ using Eight.Application.Interfaces;
 using Eight.Application.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
-using Eight.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Net.WebSockets;
 
 namespace Eight.API.Controllers;
 
@@ -53,6 +54,13 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteUserById(Guid id)
+    {
+        await _userService.DeleteAsync(id);
+        return Ok(new { message = "Isdifadeçi silidi" });
+    }
+
     [HttpPatch("{id}/active")]
     public async Task<IActionResult> SetActive(Guid id, [FromQuery] bool isActive)
     {
@@ -81,6 +89,11 @@ public class UserController : ControllerBase
         try
         {
             var venue = await _userService.GetUserVenue(id);
+
+
+            Console.WriteLine("\n\n\n\n\n\n\n\n");
+            Console.WriteLine(venue.Name);
+            Console.WriteLine("\n\n\n\n\n\n\n\n");
             return Ok(venue);
         }catch (Exception ex)
         {

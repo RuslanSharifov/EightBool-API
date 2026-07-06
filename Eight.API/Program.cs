@@ -1,10 +1,10 @@
 ﻿using Eight.Application.Interfaces;
 using Eight.Application.Validators;
 using Eight.Domain.Entities;
-using Eight.Domain.Enums;
 using Eight.Infrastructure.Persistence;
 using Eight.Infrastructure.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -106,6 +106,20 @@ internal class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+
+        app.UseExceptionHandler(errorApp =>
+        {
+            errorApp.Run(async context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.ContentType = "text/plain";
+
+                var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+                await context.Response.WriteAsync(exception?.Message ?? "Naməlum xəta");
+            });
+        });
+
 
         using (var scope = app.Services.CreateScope())
         {

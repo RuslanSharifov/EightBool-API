@@ -1,5 +1,5 @@
 ﻿using Eight.Application.DTOs.User;
-
+using Eight.Application.DTOs.Venue;
 using Eight.Domain.Entities;
 
 namespace Eight.Application.Interfaces;
@@ -13,9 +13,9 @@ public interface IUserService
     Task SetActiveAsync(Guid id, bool isActive);
     Task UpdateRoleAsync(Guid id, int role);
     Task UpdateAsync(Guid id, UserUpdateRequest request);
-
     Task DeleteAsync(Guid id);
-    Task<Venue> GetUserVenue(Guid id);
+    Task<VenueResponse> GetUserVenue(Guid id);
+    Task DeleteUserAsync(Guid id);
     
 
 }

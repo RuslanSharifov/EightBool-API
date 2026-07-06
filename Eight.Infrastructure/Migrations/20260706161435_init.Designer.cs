@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Eight.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260614000744_init2")]
-    partial class init2
+    [Migration("20260706161435_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -204,6 +204,9 @@ namespace Eight.Infrastructure.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("VenueId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -320,7 +323,7 @@ namespace Eight.Infrastructure.Migrations
                     b.HasOne("Eight.Domain.Entities.User", "Admin")
                         .WithMany()
                         .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Admin");

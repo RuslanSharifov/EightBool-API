@@ -43,6 +43,13 @@ public class VenueService : IVenueService
             AdminId = request.AdminId
         };
 
+        var user = await _db.Users.FindAsync(venue.AdminId);
+        if (user == null)
+            throw new Exception("İsdifadəçi tapılmadı");
+
+        user.VenueId = venue.Id;
+
+
         _db.Venues.Add(venue);
         await _db.SaveChangesAsync();
         return ToResponse(venue);
@@ -73,6 +80,13 @@ public class VenueService : IVenueService
     }
 
     private static VenueResponse ToResponse(Venue x) => new(
-        x.Id, x.Name, x.Address, x.OpenTime, x.CloseTime,
-        x.IsActive, x.ServiceChargeEnabled, x.ServiceChargePercent);
+        x.Id, 
+        x.Name, 
+        x.AdminId,
+        x.Address, 
+        x.OpenTime, 
+        x.CloseTime,
+        x.IsActive, 
+        x.ServiceChargeEnabled, 
+        x.ServiceChargePercent);
 }

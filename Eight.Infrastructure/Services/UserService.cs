@@ -1,8 +1,8 @@
 ﻿using Eight.Application.DTOs.User;
+using Eight.Application.DTOs.Venue;
 using Eight.Application.Interfaces;
 using Eight.Domain.Entities;
 using Eight.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Eight.Infrastructure.Services;
@@ -62,7 +62,19 @@ public class UserService : IUserService
     }
 
     private static UserResponse ToResponse(User x) =>
-        new(x.Id, x.Name, x.Email, x.Role, x.IsActive);
+        new(x.Id, x.VenueId!, x.Name, x.Email, x.Role, x.IsActive);
+    private static VenueResponse ToResponse(Venue x) =>
+    new(
+        x.Id,
+        x.Name,
+        x.AdminId,
+        x.Address,
+        x.OpenTime,
+        x.CloseTime,
+        x.IsActive,
+        x.ServiceChargeEnabled,
+        x.ServiceChargePercent
+    );
 
     public async Task UpdateRol(Guid id, int rol)
     {
@@ -124,17 +136,29 @@ public class UserService : IUserService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Venue?> GetUserVenue(Guid id)
+    public async Task<VenueResponse?> GetUserVenue(Guid id)
+    {
+        var user = await _db.Users.FindAsync(id)
+            ?? throw new Exception("İstifadəçi tapılmadı.");
+
+        if (user.VenueId == null)
+            return null;
+
+        var venue = await _db.Venues.FindAsync(user.VenueId)
+            ?? throw new Exception("Məkan tapılmadı.");
+
+        return ToResponse(venue);
+    }
+
+    public async Task DeleteUserAsync(Guid id)
     {
         var user = await _db.Users.FindAsync(id);
+
         if (user == null)
-            return null;
-        if (user.VenueId == null)
+            throw new Exception("İstifadəçi tapılmadı");
 
-            return null;
-
-        var venueId = await _db.Venues.FindAsync(user.VenueId);
-        var venue = await _db.Venues.FindAsync(venueId);
-        return venue; 
+        _db.Users.Remove(user);
+        await _db.SaveChangesAsync();
     }
+
 }

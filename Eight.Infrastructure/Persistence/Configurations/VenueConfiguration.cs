@@ -1,8 +1,6 @@
 ﻿using Eight.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Eight.Infrastructure.Persistence.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 public class VenueConfiguration : IEntityTypeConfiguration<Venue>
 {
@@ -10,5 +8,10 @@ public class VenueConfiguration : IEntityTypeConfiguration<Venue>
     {
         builder.Property(x => x.ServiceChargePercent)
                .HasPrecision(5, 2);
+
+        builder.HasOne(v => v.Admin)
+               .WithMany()
+               .HasForeignKey(v => v.AdminId)
+               .OnDelete(DeleteBehavior.Restrict);
     }
 }

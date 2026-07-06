@@ -8,6 +8,6 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public UserRole Role { get; set; }
     public bool IsActive { get; set; } = true;
-    public Venue ?VenueId { get; set; }
+    public Guid ?VenueId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

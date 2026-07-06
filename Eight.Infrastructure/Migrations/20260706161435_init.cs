@@ -21,6 +21,7 @@ namespace Eight.Infrastructure.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    VenueId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -50,6 +51,30 @@ namespace Eight.Infrastructure.Migrations
                         name: "FK_Venues_Users_AdminId",
                         column: x => x.AdminId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BilliardTables",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    PricePerHour = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VenueId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BilliardTables", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BilliardTables_Venues_VenueId",
+                        column: x => x.VenueId,
+                        principalTable: "Venues",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -97,30 +122,6 @@ namespace Eight.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tablse",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PricePerHour = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    VenueId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tablse", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tablse_Venues_VenueId",
-                        column: x => x.VenueId,
-                        principalTable: "Venues",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Sessions",
                 columns: table => new
                 {
@@ -136,9 +137,9 @@ namespace Eight.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Sessions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sessions_Tablse_TableId",
+                        name: "FK_Sessions_BilliardTables_TableId",
                         column: x => x.TableId,
-                        principalTable: "Tablse",
+                        principalTable: "BilliardTables",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -171,6 +172,11 @@ namespace Eight.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_BilliardTables_VenueId",
+                table: "BilliardTables",
+                column: "VenueId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Licenses_VenueId",
                 table: "Licenses",
                 column: "VenueId",
@@ -197,11 +203,6 @@ namespace Eight.Infrastructure.Migrations
                 column: "TableId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tablse_VenueId",
-                table: "Tablse",
-                column: "VenueId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Venues_AdminId",
                 table: "Venues",
                 column: "AdminId");
@@ -223,7 +224,7 @@ namespace Eight.Infrastructure.Migrations
                 name: "Sessions");
 
             migrationBuilder.DropTable(
-                name: "Tablse");
+                name: "BilliardTables");
 
             migrationBuilder.DropTable(
                 name: "Venues");
