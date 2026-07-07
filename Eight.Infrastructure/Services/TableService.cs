@@ -56,4 +56,22 @@ public class TableService : ITableService
 
     private static TableResponse ToResponse(Table x) =>
         new(x.Id, x.Name, x.Type, x.Status, x.PricePerHour, x.IsActive);
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var table = await _db.Tables.FindAsync(id)
+            ?? throw new Exception("Masa tapılmadı");
+
+        if (table.Status == TableStatus.Occupied)
+            throw new Exception("Bu masa hal-hazırda məşğuldur (aktiv oyun var) və silinə bilməz.");
+
+        bool hasActiveSession = await _db.Sessions
+            .AnyAsync(s => s.TableId == id && s.Status == SessionStatus.Open);
+
+        if (hasActiveSession)
+            throw new Exception("Masanın aktiv hesabat sessiyası mövcuddur. Öncə sessiyanı bağlayın.");
+
+        _db.Tables.Remove(table);
+        await _db.SaveChangesAsync();
+    }
 }

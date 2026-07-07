@@ -8,5 +8,7 @@ public interface ITableService
     Task<List<TableResponse>> GetByVenueAsync(Guid venueId);
     Task<TableResponse> CreateAsync(TableRequest request);
     Task<TableResponse> UpdateAsync(Guid id, TableRequest request);
-    Task SetStatusAsync(Guid id, TableStatus status);
+    Task SetStatusAsync(Guid id, TableStatus status); 
+    Task DeleteAsync(Guid id);
+
 }

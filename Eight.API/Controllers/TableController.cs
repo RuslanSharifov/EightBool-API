@@ -36,4 +36,18 @@ public class TableController : ControllerBase
         await _tableService.SetStatusAsync(id, status);
         return NoContent();
     }
+
+    [HttpDelete("id")]
+    [Authorize(Roles = "SuperAdmin,Admin,HallAdmin")]
+    public async Task<IActionResult> DeleteTableAsync(Guid id)
+    {
+        try
+        {
+            await _tableService.DeleteAsync(id);
+            return Ok(new { message = "Masa ugurla slinid." });
+        }catch (Exception ex) 
+        {
+            return BadRequest(new {message = ex});
+        }
+    }
 }

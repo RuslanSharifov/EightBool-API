@@ -118,8 +118,6 @@ public class VenueService : IVenueService
         await _db.SaveChangesAsync();
     }
 
-
-
     public async Task ChangeAdminAsync(Guid VenueId, Guid NewAdminId)
     {
         var venue = await _db.Venues.FindAsync(VenueId)
