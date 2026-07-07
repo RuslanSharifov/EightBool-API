@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Eight.API.Controllers;
 
-//[ApiController]
+[ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class VenueController : ControllerBase
@@ -30,8 +30,8 @@ public class VenueController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
         => Ok(await _venueService.GetByIdAsync(id));
 
-    [Authorize(Roles = "SuperAdmin")]
     [HttpPost]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> Create(VenueRequest request)
     {
         Console.WriteLine(request);
