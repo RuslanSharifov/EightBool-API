@@ -2,7 +2,9 @@
 using Eight.Application.Interfaces;
 using Eight.Domain.Entities;
 using Eight.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.X86;
 
 namespace Eight.Infrastructure.Services;
 
@@ -14,6 +16,18 @@ public class VenueService : IVenueService
     {
         _db = db;
     }
+
+    private static VenueResponse ToResponse(Venue x) => new(
+    x.Id,
+    x.Name,
+    x.AdminId,
+    x.Address,
+    x.OpenTime,
+    x.CloseTime,
+    x.IsActive,
+    x.ServiceChargeEnabled,
+    x.ServiceChargePercent);
+
 
     public async Task<List<VenueResponse>> GetAllAsync()
     {
@@ -31,6 +45,19 @@ public class VenueService : IVenueService
 
     public async Task<VenueResponse> CreateAsync(VenueRequest request)
     {
+
+        if (request.AdminId == Guid.Empty)
+            throw new Exception("Admin seçilməyib.");
+
+        var admin = await _db.Users.FindAsync(request.AdminId)
+            ?? throw new Exception("Admin tapılmadı.");
+
+        if (admin.Role != UserRole.Admin)
+            throw new Exception("Seçilən istifadəçi Admin rolunda deyil.");
+
+        if (admin.VenueId != null)
+            throw new Exception($"'{admin.Name}' artıq başqa obyektə təyin edilib.");
+
         var venue = new Venue
         {
             Id = Guid.NewGuid(),
@@ -43,13 +70,7 @@ public class VenueService : IVenueService
             AdminId = request.AdminId
         };
 
-        var user = await _db.Users.FindAsync(venue.AdminId);
-        if (user == null)
-            throw new Exception("İsdifadəçi tapılmadı");
-
-        user.VenueId = venue.Id;
-
-
+        admin.VenueId = venue.Id;
         _db.Venues.Add(venue);
         await _db.SaveChangesAsync();
         return ToResponse(venue);
@@ -71,6 +92,24 @@ public class VenueService : IVenueService
         return ToResponse(venue);
     }
 
+    public async Task DeleteAsync(Guid id)
+    {
+        var venue = await (_db.Venues.FindAsync(id))
+            ?? throw new Exception("Obyekt tapılmaı. ");
+        
+        if (venue.AdminId != null)
+        {
+            var admin = await _db.Users.FindAsync(venue.AdminId);
+            if (admin != null)
+            {
+                admin.VenueId = null;
+            }
+        }   
+
+        _db.Venues.Remove(venue);
+        await _db.SaveChangesAsync();
+    }
+
     public async Task SetActiveAsync(Guid id, bool isActive)
     {
         var venue = await _db.Venues.FindAsync(id)
@@ -79,14 +118,34 @@ public class VenueService : IVenueService
         await _db.SaveChangesAsync();
     }
 
-    private static VenueResponse ToResponse(Venue x) => new(
-        x.Id, 
-        x.Name, 
-        x.AdminId,
-        x.Address, 
-        x.OpenTime, 
-        x.CloseTime,
-        x.IsActive, 
-        x.ServiceChargeEnabled, 
-        x.ServiceChargePercent);
+
+
+    public async Task ChangeAdminAsync(Guid VenueId, Guid NewAdminId)
+    {
+        var venue = await _db.Venues.FindAsync(VenueId)
+            ?? throw new Exception("Obyekt tapılmadı.");
+
+        var oldAdmin = await _db.Users.FindAsync(venue.AdminId);
+        var NewAdmin = await _db.Users.FindAsync(NewAdminId)
+            ?? throw new Exception("Təyin olunan admin tapılmadı. ");
+        if (NewAdmin.Role != UserRole.Admin)
+            throw new Exception("Uygnsuz Admin Rolu");
+
+
+        if (NewAdmin.VenueId != null)
+        {
+            var oldVenue = await _db.Venues.FindAsync(NewAdmin.VenueId);
+            throw new Exception($"@{NewAdmin.Name} Admin olaraq '{oldVenue?.Name}' obyektində fəaliyyət göstərir.");
+        }
+
+
+        var newAdmin = await _db.Users.FindAsync(NewAdminId)
+            ?? throw new Exception("Dəyişiklik uğursuz oldu, admin tapılmadı. ");
+
+        if (oldAdmin != null)
+            oldAdmin.VenueId = null;
+        venue.AdminId = NewAdminId;
+        NewAdmin.VenueId = venue.Id;
+        await _db.SaveChangesAsync();
+    }
 }

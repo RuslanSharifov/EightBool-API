@@ -26,6 +26,10 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetAll()
         => Ok(await _userService.GetAllAsync());
 
+    [HttpGet("available-admins")]
+    public async Task<IActionResult> GetAvailableAdmins()
+        => Ok(await _userService.GetAvailableAdminsAsync());
+
     [HttpGet("Profile/{id}")]
     public async Task<IActionResult> GetById(Guid id)
         => Ok(await _userService.GetByIdAsync(id));
@@ -90,10 +94,6 @@ public class UserController : ControllerBase
         {
             var venue = await _userService.GetUserVenue(id);
 
-
-            Console.WriteLine("\n\n\n\n\n\n\n\n");
-            Console.WriteLine(venue.Name);
-            Console.WriteLine("\n\n\n\n\n\n\n\n");
             return Ok(venue);
         }catch (Exception ex)
         {

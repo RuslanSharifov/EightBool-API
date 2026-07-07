@@ -4,6 +4,7 @@ using Eight.Application.Interfaces;
 using Eight.Domain.Entities;
 using Eight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace Eight.Infrastructure.Services;
 
@@ -19,6 +20,14 @@ public class UserService : IUserService
             .Where(x => x.Role != UserRole.SuperAdmin)
             .Select(x => ToResponse(x))
             .ToListAsync();
+    
+    public async Task<List<UserResponse>> GetAvailableAdminsAsync()
+        => await _db.Users
+            .Where(x => x.VenueId != null)
+             .Where(x => x.Role == UserRole.Admin)
+            .Select(x => ToResponse(x))
+            .ToListAsync();
+
     public async Task<UserResponse> GetByIdAsync(Guid id)
     {
         var user = await _db.Users.FindAsync(id)
@@ -132,6 +141,14 @@ public class UserService : IUserService
     {
         var user = await _db.Users.FindAsync(id)
             ?? throw new Exception("İstifadəçi tapılmadı. ");
+        if (user.VenueId != null)
+        {
+            var venue = await _db.Venues.FindAsync(user.VenueId);
+            if (venue != null)
+                throw new Exception($"Admin {user.Name} '{venue.Name}' obyektinin adminidir. Əvvəlcə obyektə başqa admin təyin edin.");
+        }
+
+
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
     }
@@ -157,8 +174,17 @@ public class UserService : IUserService
         if (user == null)
             throw new Exception("İstifadəçi tapılmadı");
 
+        if (user.VenueId != null)
+        {
+            var venue = await _db.Venues.FindAsync(user.VenueId);
+            if (venue != null)
+                throw new Exception($"Isdifadeci {venue.Name} obyektine teyin olunu silmey mumkun olmur.");
+        }
+
+
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
     }
+
 
 }

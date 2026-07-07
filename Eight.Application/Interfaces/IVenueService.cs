@@ -8,5 +8,7 @@ public interface IVenueService
     Task<VenueResponse> GetByIdAsync(Guid id);
     Task<VenueResponse> CreateAsync(VenueRequest request);
     Task<VenueResponse> UpdateAsync(Guid id, VenueRequest request);
+    Task ChangeAdminAsync(Guid VenueId, Guid NewAdminId);
+    Task DeleteAsync(Guid id);
     Task SetActiveAsync(Guid id, bool isActive);
 }

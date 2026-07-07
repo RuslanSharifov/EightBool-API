@@ -1,4 +1,5 @@
-﻿using Eight.Application.Interfaces;
+﻿using Eight.Application.DTOs.Venue;
+using Eight.Application.Interfaces;
 using Eight.Application.Validators;
 using Eight.Domain.Entities;
 using Eight.Infrastructure.Persistence;
@@ -14,20 +15,17 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Serilog
         builder.Host.UseSerilog((ctx, config) =>
             config.ReadFrom.Configuration(ctx.Configuration)
                   .WriteTo.Console()
                   .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day));
 
-        // DB
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
 
 
 
-        // JWT
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
@@ -90,7 +88,9 @@ internal class Program
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();
+
+        builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();   
+        builder.Services.AddValidatorsFromAssemblyContaining<VenueRequestValidator>();   
 
 
 
