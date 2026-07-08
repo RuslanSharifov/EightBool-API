@@ -6,5 +6,6 @@ public record LoginResponse
 (
     string Token,
     string Role,
-    string Name
+    string Name,
+    Guid? VenueId
 );

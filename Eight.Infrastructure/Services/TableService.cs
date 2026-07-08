@@ -1,9 +1,11 @@
-﻿using Eight.Application.DTOs.Table;
+﻿using Eight.Application.DTOs.Enum;
+using Eight.Application.DTOs.Table;
 using Eight.Application.Interfaces;
 using Eight.Domain.Entities;
 using Eight.Domain.Enums;
 using Eight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace Eight.Infrastructure.Services;
 
@@ -18,6 +20,32 @@ public class TableService : ITableService
             .Where(x => x.VenueId == venueId)
             .Select(x => ToResponse(x))
             .ToListAsync();
+
+    public Task<List<EnumResponse>> GetTableTypes()
+    {
+        var types = Enum.GetValues<TableType>()
+            .Select(x => new EnumResponse
+            {
+                Value = (int)x,
+                Name = x.ToString()
+            })
+            .ToList();
+
+        return Task.FromResult(types);
+    }
+
+    public Task<List<EnumResponse>> GetTableStatus()
+    {
+        var status = Enum.GetValues<TableStatus>()
+            .Select(x => new EnumResponse
+            {
+                Value = (int)x,
+                Name = x.ToString()
+            })
+            .ToList();
+
+        return Task.FromResult(status);
+    }
 
     public async Task<TableResponse> CreateAsync(TableRequest request)
     {
@@ -39,9 +67,13 @@ public class TableService : ITableService
     {
         var table = await _db.Tables.FindAsync(id)
             ?? throw new Exception("Masa tapılmadı.");
+
+
+        if (request.Name.Length < 3)
+            throw new Exception("Masa adı minimum 3 simvoldan ibarət olmalıdır.");
         table.Name = request.Name;
         table.Type = request.Type;
-        table.PricePerHour = request.PricePerHour;
+        table.PricePerHour = Math.Abs(request.PricePerHour);
         await _db.SaveChangesAsync();
         return ToResponse(table);
     }
@@ -50,6 +82,9 @@ public class TableService : ITableService
     {
         var table = await _db.Tables.FindAsync(id)
             ?? throw new Exception("Masa tapılmadı.");
+        if (table.Status != TableStatus.Occupied|| table.Status != TableStatus.Available)
+            throw new Exception("Bu masa hal-hazırda məşğuldur (aktiv oyun var). ");
+
         table.Status = status;
         await _db.SaveChangesAsync();
     }
@@ -74,4 +109,6 @@ public class TableService : ITableService
         _db.Tables.Remove(table);
         await _db.SaveChangesAsync();
     }
+
+
 }

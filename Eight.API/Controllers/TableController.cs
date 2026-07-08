@@ -16,8 +16,23 @@ public class TableController : ControllerBase
     public TableController(ITableService tableService) => _tableService = tableService;
 
     [HttpGet("venue/{venueId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetByVenue(Guid venueId)
         => Ok(await _tableService.GetByVenueAsync(venueId));
+
+    [HttpGet("types")]
+    public async Task<IActionResult> GetTableTypes()
+    {
+        return Ok(await _tableService.GetTableTypes());
+    }
+
+    [HttpGet("status")]
+    public async Task<IActionResult> GetTableStatus()
+    {
+        return Ok(await _tableService.GetTableStatus());
+    }
+
+
 
     [HttpPost]
     [Authorize(Roles = "SuperAdmin,Admin")]
@@ -27,7 +42,17 @@ public class TableController : ControllerBase
     [HttpPut("{id}")]
     [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> Update(Guid id, TableRequest request)
-        => Ok(await _tableService.UpdateAsync(id, request));
+    {
+        try
+        {
+            await _tableService.UpdateAsync(id, request);
+            return Ok(new {message = "Dəyisikliklər tətbig rdildi. "});
+
+        }catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpPatch("{id}/status")]
     [Authorize(Roles = "SuperAdmin,Admin,HallAdmin")]
@@ -47,7 +72,7 @@ public class TableController : ControllerBase
             return Ok(new { message = "Masa ugurla slinid." });
         }catch (Exception ex) 
         {
-            return BadRequest(new {message = ex});
+            return BadRequest(new {message = ex.Message});
         }
     }
 }

@@ -8,4 +8,5 @@ public interface ISessionService
     Task<SessionResponse> CloseAsync(Guid id);
     Task<SessionResponse> GetByIdAsync(Guid id);
     Task<List<SessionResponse>> GetActiveByVenueAsync(Guid venueId);
+
 }

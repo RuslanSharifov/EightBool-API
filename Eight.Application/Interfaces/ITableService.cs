@@ -1,4 +1,5 @@
-﻿using Eight.Application.DTOs.Table;
+﻿using Eight.Application.DTOs.Enum;
+using Eight.Application.DTOs.Table;
 using Eight.Domain.Enums;
 
 namespace Eight.Application.Interfaces;
@@ -10,5 +11,7 @@ public interface ITableService
     Task<TableResponse> UpdateAsync(Guid id, TableRequest request);
     Task SetStatusAsync(Guid id, TableStatus status); 
     Task DeleteAsync(Guid id);
+    Task<List<EnumResponse>> GetTableTypes();
+    Task<List<EnumResponse>> GetTableStatus();
 
 }

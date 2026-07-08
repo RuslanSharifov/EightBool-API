@@ -65,6 +65,51 @@ public class VenueController : ControllerBase
         }
     }
 
+    [HttpGet("{id}/hall-admin")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
+    public async Task<IActionResult> GetHallAdmin(Guid id)
+    {
+        try
+        {
+            var hallAdmin = await _venueService.GetHallAdmin(id);
+
+            if (hallAdmin is null)
+                return NotFound(new
+                {
+                    message = "Bu məkana aid Hall Admin tapılmadı."
+                });
+
+            return Ok(hallAdmin);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+    }
+
+    [HttpPut("{venueId}/hall-admin/{hallAdminId}")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
+    public async Task<IActionResult> UpdateHallAdmin( Guid venueId, Guid hallAdminId)
+    {
+        try
+        {
+            var result = await _venueService.UpdateHallAdminAsync(
+                venueId,
+                hallAdminId);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+    }
 
     [HttpPatch("{venueId}/admin")]
     [Authorize(Roles = "SuperAdmin")]

@@ -1,4 +1,5 @@
-﻿using Eight.Application.DTOs.Venue;
+﻿using Eight.Application.DTOs.User;
+using Eight.Application.DTOs.Venue;
 using Eight.Application.Interfaces;
 using Eight.Domain.Entities;
 using Eight.Infrastructure.Persistence;
@@ -28,6 +29,17 @@ public class VenueService : IVenueService
     x.ServiceChargeEnabled,
     x.ServiceChargePercent);
 
+    private UserResponse ToResponse(User user)
+    {
+        return new UserResponse(
+            user.Id,
+            user.VenueId,
+            user.Name,
+            user.Email,
+            user.Role,
+            user.IsActive
+        );
+    }
 
     public async Task<List<VenueResponse>> GetAllAsync()
     {
@@ -145,5 +157,43 @@ public class VenueService : IVenueService
         venue.AdminId = NewAdminId;
         NewAdmin.VenueId = venue.Id;
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<UserResponse?> GetHallAdmin(Guid venueId)
+        => await _db.Users
+            .Where(x => x.VenueId == venueId && x.Role == UserRole.HallAdmin)
+            .Select(x => new UserResponse(
+                x.Id,
+                x.VenueId,
+                x.Name,
+                x.Email,
+                x.Role,
+                x.IsActive
+            ))
+            .FirstOrDefaultAsync();
+
+    public async Task<UserResponse> UpdateHallAdminAsync(Guid venueId, Guid hallAdminId)
+    {
+        var venue = await _db.Venues.FindAsync(venueId)
+            ?? throw new Exception("Məkan tapılmadı.");
+
+        var hallAdmin = await _db.Users.FindAsync(hallAdminId)
+            ?? throw new Exception("Hall Admin tapılmadı.");
+
+        if (hallAdmin.Role != UserRole.HallAdmin)
+            throw new Exception("Seçilən istifadəçi Hall Admin rolunda deyil.");
+
+        hallAdmin.VenueId = venue.Id;
+
+        await _db.SaveChangesAsync();
+
+        return new UserResponse(
+            hallAdmin.Id,
+            hallAdmin.VenueId,
+            hallAdmin.Name,
+            hallAdmin.Email,
+            hallAdmin.Role,
+            hallAdmin.IsActive
+        );
     }
 }

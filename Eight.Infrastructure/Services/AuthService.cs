@@ -34,7 +34,7 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("BLOCKED");
 
         var token = GenerateToken(user);
-        return new LoginResponse(token, user.Role.ToString(), user.Name);
+        return new LoginResponse(token, user.Role.ToString(), user.Name, user.VenueId);
     }
 
     private string GenerateToken(Eight.Domain.Entities.User user)
