@@ -20,7 +20,18 @@ public class SessionController : ControllerBase
 
     [HttpGet("venue/{venueId}/active")]
     public async Task<IActionResult> GetActive(Guid venueId)
-        => Ok(await _sessionService.GetActiveByVenueAsync(venueId));
+    {
+        try
+        {
+            var result = await _sessionService.GetActiveByVenueAsync(venueId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Xəta baş verdi: " + ex.Message });
+        }
+    }
+
 
     [HttpPost("open")]
     [Authorize(Roles = "HallAdmin,SuperAdmin")]
