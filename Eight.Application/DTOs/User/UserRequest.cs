@@ -6,5 +6,6 @@ public record UserRequest(
     string Name, 
     string Email, 
     string Password, 
-    UserRole Role
+    UserRole Role,
+    Guid? VenueId
 );

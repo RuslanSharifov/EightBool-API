@@ -10,7 +10,7 @@ namespace Eight.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "SuperAdmin")]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -23,18 +23,30 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> GetAll()
         => Ok(await _userService.GetAllAsync());
 
     [HttpGet("available-admins")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> GetAvailableAdmins()
         => Ok(await _userService.GetAvailableAdminsAsync());
 
+    [HttpGet("venue/{venueId}/staff")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    public async Task<IActionResult> GetStaffByVenue(Guid venueId)
+    {
+        var staff = await _userService.GetStaffByVenueAsync(venueId);
+        return Ok(staff);
+    }
+
     [HttpGet("Profile/{id}")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> GetById(Guid id)
         => Ok(await _userService.GetByIdAsync(id));
 
     [HttpPut("{id}/role")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> ChangeRole(Guid id, [FromBody] int newRole)
     {
         await _userService.UpdateRol(id, newRole);
@@ -42,9 +54,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Create(UserRequest request)
     {
         var validation = await _validator.ValidateAsync(request);
+
         if (!validation.IsValid)
             return BadRequest(validation.Errors.Select(e => e.ErrorMessage));
 
@@ -59,13 +73,15 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("delete/{id}")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> DeleteUserById(Guid id)
     {
         await _userService.DeleteAsync(id);
-        return Ok(new { message = "Isdifadeçi silidi" });
+        return Ok(new { message = "İstifadəçi silindi." });
     }
 
     [HttpPatch("{id}/active")]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> SetActive(Guid id, [FromQuery] bool isActive)
     {
         await _userService.SetActiveAsync(id, isActive);
@@ -73,6 +89,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPatch("{id}/role")]
+    [Authorize(Roles = "SuperAdmin")]
     public async Task<IActionResult> UpdateRole(Guid id, [FromQuery] int role)
     {
         try
@@ -86,23 +103,23 @@ public class UserController : ControllerBase
         }
     }
 
-
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> GetUserVenue(Guid id)
     {
         try
         {
             var venue = await _userService.GetUserVenue(id);
-
             return Ok(venue);
-        }catch (Exception ex)
+        }
+        catch (Exception ex)
         {
-            return BadRequest(new[] {ex.Message });
+            return BadRequest(new[] { ex.Message });
         }
     }
 
-
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateRequest request)
     {
         try
@@ -112,7 +129,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NoContent();
+            return BadRequest(new[] { ex.Message });
         }
     }
 }

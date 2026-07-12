@@ -8,5 +8,6 @@ public interface IProductService
     Task<ProductResponse> CreateAsync(ProductRequest request);
     Task<ProductResponse> UpdateAsync(Guid id, ProductRequest request);
     Task SetActiveAsync(Guid id, bool isActive);
+    Task<List<ProductResponse>> GetAllByVenueAsync(Guid venueId);
     Task DeleteAsync(Guid id);
 }

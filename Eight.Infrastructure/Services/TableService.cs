@@ -82,8 +82,9 @@ public class TableService : ITableService
     {
         var table = await _db.Tables.FindAsync(id)
             ?? throw new Exception("Masa tapılmadı.");
-        if (table.Status != TableStatus.Occupied|| table.Status != TableStatus.Available)
-            throw new Exception("Bu masa hal-hazırda məşğuldur (aktiv oyun var). ");
+
+        if (table.Status == TableStatus.Occupied && status != TableStatus.Available)
+            throw new Exception("Bu masa hal-hazırda məşğuldur (aktiv oyun var). Əvvəlcə sessiyanı bağlayın.");
 
         table.Status = status;
         await _db.SaveChangesAsync();

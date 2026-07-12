@@ -32,14 +32,74 @@ public class SessionController : ControllerBase
         }
     }
 
+    [HttpGet("table/{tableId}/active")]
+    public async Task<IActionResult> GetActiveByTable(Guid tableId)
+    {
+        try
+        {
+            var result = await _sessionService.GetActiveByTableAsync(tableId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("venue/{venueId}/history")]
+    public async Task<IActionResult> GetHistory(Guid venueId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+    {
+        try
+        {
+            var result = await _sessionService.GetHistoryByVenueAsync(venueId, from, to);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 
     [HttpPost("open")]
     [Authorize(Roles = "HallAdmin,SuperAdmin")]
     public async Task<IActionResult> Open(SessionRequest request)
-        => Ok(await _sessionService.OpenAsync(request));
+    {
+        try
+        {
+            return Ok(await _sessionService.OpenAsync(request));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 
     [HttpPatch("{id}/close")]
-    [Authorize(Roles = "HallAdmin,SuperAdmin")]
+    [Authorize(Roles = "HallAdmin,SuperAdmin,Admin")]
     public async Task<IActionResult> Close(Guid id)
-        => Ok(await _sessionService.CloseAsync(id));
+    {
+        try
+        {
+            return Ok(await _sessionService.CloseAsync(id));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPatch("{id}/customer-count")]
+    [Authorize(Roles = "HallAdmin,SuperAdmin")]
+    public async Task<IActionResult> UpdateCustomerCount(Guid id, [FromQuery] int count)
+    {
+        try
+        {
+            var result = await _sessionService.UpdateCustomerCountAsync(id, count);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }

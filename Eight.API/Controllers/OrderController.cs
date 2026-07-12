@@ -16,18 +16,43 @@ public class OrderController : ControllerBase
 
     [HttpGet("session/{sessionId}")]
     public async Task<IActionResult> GetBySession(Guid sessionId)
-        => Ok(await _orderService.GetBySessionAsync(sessionId));
+    {
+        try
+        {
+            return Ok(await _orderService.GetBySessionAsync(sessionId));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 
     [HttpPost]
     [Authorize(Roles = "HallAdmin,SuperAdmin")]
     public async Task<IActionResult> Add(OrderRequest request)
-        => Ok(await _orderService.AddAsync(request));
+    {
+        try
+        {
+            return Ok(await _orderService.AddAsync(request));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("id")]
     [Authorize(Roles = "HallAdmin,SuperAdmin")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await _orderService.DeleteAsync(id);
-        return NoContent();
+        try
+        {
+            await _orderService.DeleteAsync(id);
+            return Ok(new { message = "Sifariş silindi." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

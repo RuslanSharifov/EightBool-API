@@ -18,6 +18,20 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetByVenue(Guid venueId)
         => Ok(await _productService.GetByVenueAsync(venueId));
 
+    [HttpGet("venue/{venueId}/all")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    public async Task<IActionResult> GetAllByVenue(Guid venueId)
+    {
+        try
+        {
+            return Ok(await _productService.GetAllByVenueAsync(venueId));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpPost]
     [Authorize(Roles = "SuperAdmin,Admin")]
     public async Task<IActionResult> Create(ProductRequest request)

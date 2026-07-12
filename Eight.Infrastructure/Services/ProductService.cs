@@ -18,6 +18,14 @@ public class ProductService : IProductService
             .Select(x => ToResponse(x))
             .ToListAsync();
 
+    public async Task<List<ProductResponse>> GetAllByVenueAsync(Guid venueId)
+        => await _db.Products
+            .Where(x => x.VenueId == venueId)
+            .OrderByDescending(x => x.IsActive)
+            .ThenBy(x => x.Name)
+            .Select(x => ToResponse(x))
+            .ToListAsync();
+
     public async Task<ProductResponse> CreateAsync(ProductRequest request)
     {
         var product = new Product
@@ -60,4 +68,6 @@ public class ProductService : IProductService
 
     private static ProductResponse ToResponse(Product x) =>
         new(x.Id, x.Name, x.Price, x.IsActive);
+
+
 }

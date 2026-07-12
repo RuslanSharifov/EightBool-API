@@ -1,4 +1,5 @@
-﻿using Eight.Application.DTOs.Venue;
+﻿using Eight.Api.Serialization;
+using Eight.Application.DTOs.Venue;
 using Eight.Application.Interfaces;
 using Eight.Application.Validators;
 using Eight.Domain.Entities;
@@ -90,7 +91,14 @@ internal class Program
         builder.Services.AddScoped<IUserService, UserService>();
 
         builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();   
-        builder.Services.AddValidatorsFromAssemblyContaining<VenueRequestValidator>();   
+        builder.Services.AddValidatorsFromAssemblyContaining<VenueRequestValidator>();
+
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
+                options.JsonSerializerOptions.Converters.Add(new UtcNullableDateTimeConverter());
+            });
 
 
 

@@ -13,21 +13,17 @@ public class UserService : IUserService
     private readonly AppDbContext _db;
 
     public UserService(AppDbContext db) => _db = db;
-
-
     public async Task<List<UserResponse>> GetAllAsync()
         => await _db.Users
             .Where(x => x.Role != UserRole.SuperAdmin)
             .Select(x => ToResponse(x))
             .ToListAsync();
-    
     public async Task<List<UserResponse>> GetAvailableAdminsAsync()
         => await _db.Users
             .Where(x => x.VenueId != null)
              .Where(x => x.Role == UserRole.Admin)
             .Select(x => ToResponse(x))
             .ToListAsync();
-
     public async Task<UserResponse> GetByIdAsync(Guid id)
     {
         var user = await _db.Users.FindAsync(id)
@@ -44,7 +40,6 @@ public class UserService : IUserService
         };
         return ToResponse(UserFront);
     }
-
     public async Task<UserResponse> CreateAsync(UserRequest request)
     {
         if (await _db.Users.AnyAsync(x => x.Email == request.Email))
@@ -56,7 +51,8 @@ public class UserService : IUserService
             Name = request.Name,
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            Role = request.Role
+            Role = request.Role,
+            VenueId = request.VenueId
         };
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
@@ -69,7 +65,6 @@ public class UserService : IUserService
         user.IsActive = isActive;
         await _db.SaveChangesAsync();
     }
-
     private static UserResponse ToResponse(User x) =>
         new(x.Id, x.VenueId!, x.Name, x.Email, x.Role, x.IsActive);
     private static VenueResponse ToResponse(Venue x) =>
@@ -84,7 +79,6 @@ public class UserService : IUserService
         x.ServiceChargeEnabled,
         x.ServiceChargePercent
     );
-
     public async Task UpdateRol(Guid id, int rol)
     {
         var user = await _db.Users.FindAsync(id)
@@ -96,7 +90,6 @@ public class UserService : IUserService
         user.Role = (UserRole)rol;
         await _db.SaveChangesAsync();
     }
-
     public async Task UpdateRoleAsync(Guid id, int role)
     {
         var user = await _db.Users.FindAsync(id)
@@ -106,7 +99,6 @@ public class UserService : IUserService
         user.Role = (UserRole)role;
         await _db.SaveChangesAsync();
     }
-
     public async Task UpdateAsync(Guid id, UserUpdateRequest request)
     {
         var user = await _db.Users.FindAsync(id)
@@ -136,7 +128,11 @@ public class UserService : IUserService
 
         await _db.SaveChangesAsync();
     }
-
+    public async Task<List<UserResponse>> GetStaffByVenueAsync(Guid venueId)
+    => await _db.Users
+        .Where(x => x.VenueId == venueId && x.Role == UserRole.HallAdmin)
+        .Select(x => ToResponse(x))
+        .ToListAsync();
     public async Task DeleteAsync(Guid id)
     {
         var user = await _db.Users.FindAsync(id)
@@ -152,7 +148,6 @@ public class UserService : IUserService
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
     }
-
     public async Task<VenueResponse?> GetUserVenue(Guid id)
     {
         var user = await _db.Users.FindAsync(id)
@@ -166,7 +161,6 @@ public class UserService : IUserService
 
         return ToResponse(venue);
     }
-
     public async Task DeleteUserAsync(Guid id)
     {
         var user = await _db.Users.FindAsync(id);

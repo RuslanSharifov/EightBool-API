@@ -58,8 +58,15 @@ public class TableController : ControllerBase
     [Authorize(Roles = "SuperAdmin,Admin,HallAdmin")]
     public async Task<IActionResult> SetStatus(Guid id, [FromQuery] TableStatus status)
     {
-        await _tableService.SetStatusAsync(id, status);
-        return NoContent();
+        try
+        {
+            await _tableService.SetStatusAsync(id, status);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("id")]
