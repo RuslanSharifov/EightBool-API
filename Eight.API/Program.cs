@@ -21,11 +21,11 @@ internal class Program
                   .WriteTo.Console()
                   .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day));
 
+        // Bağlantı sətrinin təhlükəsiz oxunması
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
         builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(connectionString));
-
-
+            options.UseNpgsql(connectionString));
 
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
@@ -48,6 +48,15 @@ internal class Program
             options.AddPolicy("AllowAll", p =>
                 p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+        // Təkrarçılıq aradan qaldırıldı (Bir dəfə çağrılır)
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
+                options.JsonSerializerOptions.Converters.Add(new UtcNullableDateTimeConverter());
+            });
+
+        builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddSwaggerGen(c =>
         {
@@ -60,28 +69,21 @@ internal class Program
                 In = Microsoft.OpenApi.Models.ParameterLocation.Header
             });
             c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                    {
+                        Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                        {
+                            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
                 }
-            },
-            Array.Empty<string>()
-        }
-    });
+            });
         });
 
-
-
-
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IVenueService, VenueService>();
         builder.Services.AddScoped<ITableService, TableService>();
@@ -90,17 +92,8 @@ internal class Program
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IUserService, UserService>();
 
-        builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();   
+        builder.Services.AddValidatorsFromAssemblyContaining<UserRequestValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<VenueRequestValidator>();
-
-        builder.Services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new UtcDateTimeConverter());
-                options.JsonSerializerOptions.Converters.Add(new UtcNullableDateTimeConverter());
-            });
-
-
 
         var app = builder.Build();
 
@@ -127,7 +120,6 @@ internal class Program
                 await context.Response.WriteAsync(exception?.Message ?? "Naməlum xəta");
             });
         });
-
 
         using (var scope = app.Services.CreateScope())
         {

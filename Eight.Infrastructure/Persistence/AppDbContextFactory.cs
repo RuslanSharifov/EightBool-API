@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Eight.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-
-namespace Eight.Infrastructure.Persistence;
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
@@ -10,9 +8,8 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-        optionsBuilder.UseSqlServer(
-            "Server=(localdb)\\MSSQLLocalDB;Database=EightBoolDB;Trusted_Connection=True;TrustServerCertificate=True"
-        );
+        // Standart ADO.NET formatı (hiç bir format xətası verməz)
+        optionsBuilder.UseNpgsql("Host=aws-0-ap-southeast-2.pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.gcirheukelrlhdtqauzz;Password=EightBool_529;Timeout=300;Command Timeout=300;Pooling=true;");
         return new AppDbContext(optionsBuilder.Options);
     }
 }
