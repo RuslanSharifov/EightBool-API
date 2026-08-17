@@ -106,6 +106,8 @@ internal class Program
         app.UseCors("AllowAll");
         app.UseAuthentication();
         app.UseAuthorization();
+        
+        app.MapGet("/", () => "EightBool API is running successfully! 🚀");
         app.MapControllers();
 
         app.UseExceptionHandler(errorApp =>
